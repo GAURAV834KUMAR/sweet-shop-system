@@ -77,7 +77,7 @@ describe('SweetCard Component', () => {
       />
     );
 
-    const purchaseButton = screen.getByText(/Out of Stock/i);
+    const purchaseButton = screen.getByRole('button', { name: /Out of Stock/i });
     expect(purchaseButton).toBeDisabled();
   });
 });

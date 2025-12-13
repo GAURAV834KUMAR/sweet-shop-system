@@ -1,10 +1,10 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import App from './App';
 
 describe('App Component', () => {
   test('renders without crashing', () => {
-    render(<App />);
-    expect(document.body).toBeInTheDocument();
+    const { container } = render(<App />);
+    expect(container).toBeInTheDocument();
   });
 });
