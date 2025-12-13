@@ -7,6 +7,9 @@ import { UsersService } from './users.service';
 import { User, UserRole } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 
+// Mock bcrypt module at the top level
+jest.mock('bcryptjs');
+
 describe('UsersService', () => {
   let service: UsersService;
   let repository: Repository<User>;
@@ -59,7 +62,7 @@ describe('UsersService', () => {
       };
 
       mockUserRepository.findOne.mockResolvedValue(null);
-      jest.spyOn(bcrypt, 'hash').mockImplementation(() => Promise.resolve(hashedPassword as never));
+      (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
       mockUserRepository.create.mockReturnValue(savedUser);
       mockUserRepository.save.mockResolvedValue(savedUser);
 
@@ -175,7 +178,7 @@ describe('UsersService', () => {
     };
 
     it('should return true for valid password', async () => {
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(true as never));
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
       const result = await service.validatePassword(user, 'correctPassword');
 
@@ -184,7 +187,7 @@ describe('UsersService', () => {
     });
 
     it('should return false for invalid password', async () => {
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(false as never));
+      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       const result = await service.validatePassword(user, 'wrongPassword');
 
