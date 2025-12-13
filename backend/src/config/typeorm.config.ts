@@ -9,7 +9,8 @@ export const typeOrmConfig = (): TypeOrmModuleOptions => {
       type: 'postgres',
       url: process.env.DATABASE_URL,
       entities: [User, Sweet],
-      synchronize: process.env.NODE_ENV !== 'production',
+      // Allow synchronize in production if ENABLE_DB_SYNC is true (for initial deployment)
+      synchronize: process.env.ENABLE_DB_SYNC === 'true' || process.env.NODE_ENV !== 'production',
       logging: process.env.NODE_ENV === 'development',
       ssl: {
         rejectUnauthorized: false, // Required for most cloud PostgreSQL providers
