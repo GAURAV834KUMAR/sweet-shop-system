@@ -202,19 +202,24 @@ const AdminPanel: React.FC = () => {
     <div className="space-y-6">
       <ToastContainer position="top-right" autoClose={3000} />
 
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
-          <p className="text-gray-600 mt-1">Manage your sweet shop inventory</p>
+      {/* Enhanced Header */}
+      <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 rounded-2xl shadow-2xl p-8 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-white opacity-10 transform -skew-y-6"></div>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between">
+          <div className="mb-4 md:mb-0">
+            <h1 className="text-5xl font-bold mb-2 flex items-center">
+              👑 Admin Panel
+            </h1>
+            <p className="text-purple-100 text-lg">Manage your sweet shop inventory with ease</p>
+          </div>
+          <button
+            onClick={handleCreate}
+            className="bg-white text-purple-600 hover:bg-purple-50 font-bold px-8 py-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-xl flex items-center gap-3 group"
+          >
+            <span className="text-2xl group-hover:rotate-90 transition-transform duration-300">+</span>
+            <span className="text-lg">Add New Sweet</span>
+          </button>
         </div>
-        <button
-          onClick={handleCreate}
-          className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center gap-2"
-        >
-          <span className="text-xl">+</span>
-          Add New Sweet
-        </button>
       </div>
 
       {/* Statistics Cards */}

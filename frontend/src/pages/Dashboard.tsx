@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
 import { sweetsAPI } from '../services/api';
 import { Sweet } from '../types';
 import SweetCard from '../components/SweetCard';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import SweetDetailModal from '../components/SweetDetailModal';
+import { toast } from 'react-toastify';
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
   const [sweets, setSweets] = useState<Sweet[]>([]);
   const [filteredSweets, setFilteredSweets] = useState<Sweet[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,6 +14,7 @@ const Dashboard: React.FC = () => {
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [purchaseQuantity, setPurchaseQuantity] = useState<{ [key: string]: number }>({});
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedSweet, setSelectedSweet] = useState<Sweet | null>(null);
 
   useEffect(() => {
@@ -73,26 +72,90 @@ const Dashboard: React.FC = () => {
     setShowPurchaseModal(true);
   };
 
+  const handleViewDetails = (sweet: Sweet) => {
+    setSelectedSweet(sweet);
+    setShowDetailModal(true);
+  };
+
+  const handleDetailPurchase = async (quantity: number) => {
+    if (!selectedSweet) return;
+
+    const totalCost = (typeof selectedSweet.price === 'string' ? parseFloat(selectedSweet.price) : selectedSweet.price) * quantity;
+    const sweetName = selectedSweet.name;
+
+    try {
+      await sweetsAPI.purchase(selectedSweet.id, { quantity });
+      
+      // Close modal first
+      setShowDetailModal(false);
+      setSelectedSweet(null);
+      
+      // Show success notification immediately
+      console.log('Purchase successful from detail modal, showing toast...');
+      setTimeout(() => {
+        toast.success(`🎉 Successfully purchased ${quantity} ${sweetName}(s) for $${totalCost.toFixed(2)}!`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }, 100);
+      
+      // Refresh the sweets list
+      setTimeout(() => fetchSweets(), 200);
+    } catch (err: any) {
+      console.error('Purchase failed:', err);
+      toast.error(err.response?.data?.message || 'Purchase failed', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+
   const handlePurchaseConfirm = async () => {
     if (!selectedSweet) return;
 
     const quantity = purchaseQuantity[selectedSweet.id] || 1;
     const totalCost = (typeof selectedSweet.price === 'string' ? parseFloat(selectedSweet.price) : selectedSweet.price) * quantity;
+    const sweetName = selectedSweet.name;
 
     try {
       await sweetsAPI.purchase(selectedSweet.id, { quantity });
+      
+      // Close modal first
       setShowPurchaseModal(false);
-      const sweetName = selectedSweet.name;
       setSelectedSweet(null);
-      await fetchSweets();
-      toast.success(`🎉 Successfully purchased ${quantity} ${sweetName}(s) for $${totalCost.toFixed(2)}!`, {
-        position: "top-right",
-        autoClose: 4000,
-      });
+      
+      // Show success notification immediately
+      console.log('Purchase successful, showing toast...');
+      setTimeout(() => {
+        toast.success(`🎉 Successfully purchased ${quantity} ${sweetName}(s) for $${totalCost.toFixed(2)}!`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }, 100);
+      
+      // Refresh the sweets list
+      setTimeout(() => fetchSweets(), 200);
     } catch (err: any) {
+      console.error('Purchase failed:', err);
       toast.error(err.response?.data?.message || 'Purchase failed', {
         position: "top-right",
-        autoClose: 4000,
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
       });
     }
   };
@@ -109,13 +172,40 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <ToastContainer />
-      
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Sweet Shop</h1>
-          <p className="text-gray-600 mt-1">Browse and purchase delicious sweets</p>
+      {/* Header with Gradient */}
+      <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 rounded-2xl shadow-2xl p-8 text-white">
+        <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="text-center md:text-left mb-4 md:mb-0">
+            <h1 className="text-4xl md:text-5xl font-bold mb-2 flex items-center justify-center md:justify-start">
+              <span className="text-5xl mr-3 animate-bounce-slow">🍬</span>
+              Sweet Shop
+            </h1>
+            <p className="text-purple-100 text-lg">Discover delightful treats for every occasion</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Statistics Overview */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+          <div className="text-3xl mb-2">🍭</div>
+          <div className="text-2xl font-bold">{sweets.length}</div>
+          <div className="text-sm text-blue-100">Total Sweets</div>
+        </div>
+        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+          <div className="text-3xl mb-2">✅</div>
+          <div className="text-2xl font-bold">{sweets.filter(s => s.quantity > 0).length}</div>
+          <div className="text-sm text-green-100">In Stock</div>
+        </div>
+        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+          <div className="text-3xl mb-2">🏷️</div>
+          <div className="text-2xl font-bold">{categories.length}</div>
+          <div className="text-sm text-purple-100">Categories</div>
+        </div>
+        <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+          <div className="text-3xl mb-2">🌟</div>
+          <div className="text-2xl font-bold">{filteredSweets.length}</div>
+          <div className="text-sm text-pink-100">Showing Now</div>
         </div>
       </div>
 
@@ -216,9 +306,22 @@ const Dashboard: React.FC = () => {
               key={sweet.id}
               sweet={sweet}
               onPurchase={handlePurchaseClick}
+              onViewDetails={handleViewDetails}
             />
           ))}
         </div>
+      )}
+
+      {/* Sweet Detail Modal */}
+      {showDetailModal && selectedSweet && (
+        <SweetDetailModal
+          sweet={selectedSweet}
+          onClose={() => {
+            setShowDetailModal(false);
+            setSelectedSweet(null);
+          }}
+          onPurchase={handleDetailPurchase}
+        />
       )}
 
       {/* Purchase Modal */}
