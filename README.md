@@ -110,35 +110,33 @@ A modern, full-stack e-commerce application for managing a sweet shop, built wit
 
 ## 📸 Screenshots
 
-### 🔐 Authentication Pages
-
-#### Login Page
-![Login Page](./screenshots/login.png)
-*Modern login interface with gradient background and smooth animations*
-
-#### Register Page
-![Register Page](./screenshots/register.png)
-*User-friendly registration with validation*
-
 ### 🏠 User Dashboard
 
-#### Sweet Catalog
-![Dashboard](./screenshots/dashboard.png)
-*Beautiful product grid with statistics cards and real-time stock indicators*
+#### Sweet Catalog - View 1
+![Dashboard 1](./screenshots/dashboard1.png)
+*Beautiful product grid with gradient cards and search functionality*
+
+#### Sweet Catalog - View 2
+![Dashboard 2](./screenshots/dashboard2.png)
+*Product catalog with statistics cards and real-time stock indicators*
 
 #### Sweet Detail Modal
-![Sweet Modal](./screenshots/sweet-modal.png)
-*Detailed sweet information with purchase functionality*
+![Sweet Details](./screenshots/sweetDetails.png)
+*Detailed sweet information modal with purchase functionality and animations*
 
 ### 🛠️ Admin Panel
 
-#### Inventory Management
-![Admin Panel](./screenshots/admin-panel.png)
-*Comprehensive admin dashboard with CRUD operations*
+#### Admin Dashboard - View 1
+![Admin Panel 1](./screenshots/admin-panel.png)
+*Comprehensive admin dashboard with inventory overview*
 
-#### Add/Edit Product
-![Admin Features](./screenshots/admin-features.png)
-*Product management interface*
+#### Admin Dashboard - View 2
+![Admin Panel 2](./screenshots/admin-panel2.png)
+*Admin inventory management with CRUD operations*
+
+#### Add New Sweet
+![Add Sweet](./screenshots/add-sweet.png)
+*Product creation modal with form validation*
 
 ---
 
@@ -284,6 +282,17 @@ This is the fastest way to get the application running.
 4. **Test purchase** functionality (stock updates in real-time)
 5. **Make user admin** (see [Creating Admin Users](#-creating-admin-users) below)
 6. **Access admin panel** at http://localhost:3000/admin
+
+### 🔑 Demo Admin Account
+
+For testing purposes, you can use the following admin credentials:
+
+```
+Email: test@gmail.com
+Password: 12345678
+```
+
+**Note**: This demo account has full admin privileges and can manage inventory.
 
 ---
 
